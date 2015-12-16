@@ -241,6 +241,8 @@ PREP(removePlayerEvents);
 PREP(support_monitor);
 PREP(support_monitor2);
 
+PREP(dumpXehCounters);
+
 call COMPILE_FILE(init_eh); // All XEH Event functions
 
 

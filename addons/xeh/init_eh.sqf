@@ -1,3 +1,4 @@
+// #define XEH_COUNTERS
 //#define DEBUG_MODE_FULL
 #include "script_component.hpp"
 
@@ -23,6 +24,31 @@ SLX_XEH_EH_RespawnInit = {
 #ifndef DEBUG_MODE_FULL
     #define XEH_FUNC_NORMAL(A) SLX_XEH_STR_##A = 'Extended_##A##EH'; SLX_XEH_EH_##A = { { _this call _x }forEach((_this select 0) getVariable [SLX_XEH_STR_##A,[]]) }
 #endif
+
+#ifdef XEH_COUNTERS
+    CBA_COUNTERS = [];
+    #undef XEH_FUNC_NORMAL
+    #define XEH_FUNC_NORMAL(A) SLX_XEH_STR_##A = 'Extended_##A##EH'; \
+    SLX_XEH_EH_##A = { \
+        private _varName = format [QUOTE(counter-%1-A), typeOf (_this select 0)]; \
+        if (isNil _varName) then { \
+            _times = [[]]; \
+            {_times pushBack [];} forEach ((_this select 0) getVariable [SLX_XEH_STR_##A,[]]); \
+            private _newVar = [typeOf (_this select 0), SLX_XEH_STR_##A, _times]; \
+            missionNamespace setVariable [_varName, _newVar]; \
+            CBA_COUNTERS pushBack _newVar; \
+        }; \
+        private _newVar = missionNamespace getVariable _varName; \
+        private _timeAll = diag_tickTime; \
+        { \
+            private _timeIndex = diag_tickTime; \
+            _this call _x; \
+            ((_newVar select 2) select (_forEachIndex + 1)) pushBack (diag_tickTime - _timeIndex); \
+        } forEach ((_this select 0) getVariable [SLX_XEH_STR_##A,[]]); \
+        ((_newVar select 2) select 0) pushBack (diag_tickTime - _timeAll); \
+    }
+#endif
+
 
 #define XEH_FUNC_PLAYER(A) SLX_XEH_STR_##A##_Player = 'Extended_##A##EH_Player'
 
