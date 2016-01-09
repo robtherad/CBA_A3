@@ -35,6 +35,19 @@ if (!isNil "_func") then {
         GVAR(nextPFHid)
     };
 
+
+    if ((count GVAR(PFHhandles)) > 50) exitWith {
+        diag_log text format ["Your code is bad and you should feel bad!"];
+        {
+            if (isNil "_x") exitWith {
+                diag_log text format ["Reusing Index (this is dangerous, fix your code) [%1/%2]",_x,_forEachIndex];
+                _publicHandle = _forEachIndex;
+                GVAR(PFHhandles) set [_forEachIndex, _handle];
+            };
+        } forEach GVAR(PFHhandles);
+        GVAR(perFrameHandlerArray) pushBack [_func, _delay, 0, diag_tickTime, _params, _publicHandle];
+    };
+
     _publicHandle = GVAR(PFHhandles) pushback _handle;
     _data = [_func, _delay, 0, diag_tickTime, _params, _publicHandle];
     GVAR(perFrameHandlerArray) pushBack _data;
