@@ -89,14 +89,11 @@ if (_oldPFH && {!CBA_MISSION_START}) then {
 ["CBA_teamColorChanged", CBA_fnc_onTeamColorChanged] call CBA_fnc_addEventHandler;
 if (hasInterface) then {
     [CBA_fnc_synchTeamColors, 1, []] call CBA_fnc_addPerFrameHandler;
-    if (didJIP) then {
-        private "_team";
-        {
-            _team = _x getVariable [QGVAR(synchedTeam), ""];
-            if (_team != "") then {
-                _x assignTeam _team;
-            };
-            true
-        } count allUnits;
-    };
+    {
+        private _team = _x getVariable [QGVAR(synchedTeam), ""];
+        if (_team != "") then {
+            _x assignTeam _team;
+        };
+        true
+    } count allUnits;
 };

@@ -5,13 +5,14 @@ class CfgPatches {
         units[] = {};
         weapons[] = {};
         requiredVersion = REQUIRED_VERSION;
-        requiredAddons[] = {"A3_BaseConfig_F"};
+        requiredAddons[] = {"A3_BaseConfig_F", "3den"};
         version = VERSION;
         author[] = {"Spooner","Sickboy","Rocko"};
         authorUrl = "https://github.com/CBATeam/CBA_A3";
     };
 };
 
+#include "CfgEden.hpp"
 #include "CfgEventHandlers.hpp"
 #include "CfgFunctions.hpp"
 #include "CfgPerFrame.hpp"
