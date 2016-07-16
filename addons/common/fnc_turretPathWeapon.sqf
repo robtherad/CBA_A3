@@ -2,7 +2,8 @@
 Function: CBA_fnc_turretPathWeapon
 
 Description:
-    A function used to report the turret path belonging to a weapon of given vehicle.
+    Get the turret path belonging to a weapon of given vehicle.
+
     Reverse version of the weaponsTurret scripting command.
 
 Parameters:
@@ -28,4 +29,8 @@ params [["_vehicle", objNull, [objNull]], ["_weapon", "", [""]]];
 private _turrets = allTurrets _vehicle;
 _turrets pushBack [-1];
 
-(_turrets select {{_x == _weapon} count (_vehicle weaponsTurret _x) > 0}) param [0, []]
+#ifndef LINUX_BUILD
+    (_turrets select {{_x == _weapon} count (_vehicle weaponsTurret _x) > 0}) param [0, []]
+#else
+    ([_turrets, {{_x == _weapon} count (_vehicle weaponsTurret _x) > 0}] call BIS_fnc_conditionalSelect) param [0, []]
+#endif

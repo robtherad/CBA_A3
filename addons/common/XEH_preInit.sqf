@@ -29,12 +29,21 @@ call COMPILE_FILE(init_perFrameHandler);
 call COMPILE_FILE(init_delayLess);
 
 // Due to activateAddons being overwritten by eachother (only the last executed command will be active), we apply this bandaid
-private _addons = ("true" configClasses (configFile >> "CfgPatches")) apply {configName _x};
+#ifndef LINUX_BUILD
+    private _addons = ("true" configClasses (configFile >> "CfgPatches")) apply {configName _x};
+#else
+    private _addons = ["true" configClasses (configFile >> "CfgPatches"), {configName _x}] call CBA_fnc_filter;
+#endif
 
 activateAddons _addons;
 GVAR(addons) = _addons;
 
 // BWC
 #include "backwards_comp.sqf"
+
+// band aid - remove this once they fix PlayerConnected mission event handler
+// https://forums.bistudio.com/topic/143930-general-discussion-dev-branch/page-942#entry3003074
+[QGVAR(OPC_FIX), "onPlayerConnected", {}] call BIS_fnc_addStackedEventHandler;
+[QGVAR(OPC_FIX), "onPlayerConnected"] call BIS_fnc_removeStackedEventHandler;
 
 ADDON = true;

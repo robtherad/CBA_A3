@@ -36,6 +36,7 @@ class CfgFunctions {
             F_FILEPATH(canUseWeapon);
             F_FILEPATH(selectWeapon);
             F_FILEPATH(switchPlayer);
+            F_FILEPATH(currentUnit);
         };
 
         class Vehicles {
@@ -63,6 +64,13 @@ class CfgFunctions {
             F_FILEPATH(removeWeapon);
             F_FILEPATH(removeMagazine);
             F_FILEPATH(removeItem);
+            F_FILEPATH(weaponComponents);
+            F_FILEPATH(dropWeapon);
+            F_FILEPATH(dropMagazine);
+            F_FILEPATH(dropItem);
+            F_FILEPATH(binocularMagazine);
+            F_FILEPATH(addBinocularMagazine);
+            F_FILEPATH(removeBinocularMagazine);
         };
 
         class Cargo {
@@ -119,8 +127,6 @@ class CfgFunctions {
 
         class Broken {
             F_FILEPATH(actionArgument);
-            F_FILEPATH(dropMagazine);
-            F_FILEPATH(dropWeapon);
         };
     };
 };

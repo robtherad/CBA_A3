@@ -42,12 +42,23 @@ private _blockInput = false;
         };
 
         // check if either holding down a key is enabled or if the key wasn't already held down
-        if (_execute && {_allowHold || {GVAR(keyUpActiveList) pushBackUnique _xUp != -1}}) then {
+        #ifndef LINUX_BUILD
+            if (_execute && {_allowHold || {GVAR(keyUpActiveList) pushBackUnique _xUp != -1}}) then {
+        #else
+            if (_execute && {_allowHold || {!(_xUp in GVAR(keyUpActiveList))}}) then {
+                GVAR(keyUpActiveList) pushBack _xUp;
+        #endif
             private _params = + _this;
             _params pushBack + _keybindParams;
             _params pushBack _x;
 
             _blockInput = _params call _code;
+
+            #ifdef DEBUG_MODE_FULL
+                if ((isNil "_blockInput") || {!(_blockInput isEqualType false)}) then {
+                    LOG(PFORMAT_2("Keybind Handler returned nil or non-bool", _x, _blockInput));
+                };
+            #endif
         };
 
         if (_blockInput isEqualTo true) exitWith {};
@@ -63,8 +74,15 @@ private _blockInput = false;
 
     // Verify if the required modifier keys are present
     if (_keybindSettings isEqualTo _inputSettings) then {
-        GVAR(keyDownActiveList) pushBackUnique _x;
+        #ifndef LINUX_BUILD
+            GVAR(keyDownActiveList) pushBackUnique _x;
+        #else
+            if !(_x in GVAR(keyDownActiveList)) then {
+                GVAR(keyDownActiveList) pushBack _x;
+            };
+        #endif
     };
 } forEach (GVAR(keyUpStates) param [_inputKey, []]);
 
-_blockInput
+//Only return true if _blockInput is defined and is type bool (handlers could return anything):
+(!isNil "_blockInput") && {_blockInput isEqualTo true}

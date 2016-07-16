@@ -2,7 +2,8 @@
 Function: CBA_fnc_turretPath
 
 Description:
-    A function used to report the soldiers turret path in the current vehicle.
+    Get a unit's turret path in the current vehicle.
+
     Reverse version of the turretUnit scripting command.
 
 Parameters:
@@ -26,4 +27,8 @@ params [["_unit", objNull, [objNull]]];
 
 private _vehicle = vehicle _unit;
 
-(allTurrets [_vehicle, true] select {(_vehicle turretUnit _x) isEqualTo _unit}) param [0, []]
+#ifndef LINUX_BUILD
+    (allTurrets [_vehicle, true] select {(_vehicle turretUnit _x) isEqualTo _unit}) param [0, []]
+#else
+    ([allTurrets [_vehicle, true], {(_vehicle turretUnit _x) isEqualTo _unit}] call BIS_fnc_conditionalSelect) param [0, []]
+#endif

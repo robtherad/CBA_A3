@@ -2,7 +2,8 @@
 Function: CBA_help_fnc_setCreditsLine
 
 Description:
-    Picks a random CfgPatches entry with an "author" entry and displays author, version and url in the main menu and ingame in the pause menu.
+    Picks a random CfgPatches entry with an "author" entry and displays author,
+    version and URL in the main menu and ingame in the pause menu.
 
 Parameters:
     0: _display - Either Main menu or Pause menu display or a control of these displays. <DISPLAY, CONTROL>
@@ -37,7 +38,7 @@ if (CBA_DisableCredits) exitWith {};
 
 // find addon with author
 private _config = configFile >> "CfgPatches";
-private _entry = selectRandom ("isArray (_x >> 'author')" configClasses _config);
+private _entry = ("isArray (_x >> 'author') && {!(getArray (_x >> 'author') isEqualTo [])}" configClasses _config) call (uiNamespace getVariable "BIS_fnc_selectRandom"); //bwc for 1.54 (Linux build)
 
 if (isNil "_entry") exitWith {};
 

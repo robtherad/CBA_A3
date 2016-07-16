@@ -6,6 +6,11 @@ ADDON = false;
 GVAR(eventNamespace) = call CBA_fnc_createNamespace;
 GVAR(eventHashes) = call CBA_fnc_createNamespace;
 
+if (isServer) then {
+    GVAR(eventNamespaceJIP) = (sideLogic call CBA_fnc_getSharedGroup) createUnit ["Logic", [0,0,0], [], 0, "NONE"]; // createVehicle fails on game logics. Have to use createUnit instead.
+    publicVariable QGVAR(eventNamespaceJIP);
+};
+
 // can't add at preInit
 0 spawn {
     EVENT_PVAR_STR addPublicVariableEventHandler {(_this select 1) call CBA_fnc_localEvent};
@@ -41,7 +46,12 @@ if (!isNull (uiNamespace getVariable ["CBA_missionDisplay", displayNull])) then 
 };
 
 PREP(keyHandler);
-PREP(keyHandlerDown);
+#ifndef LINUX_BUILD
+    PREP(keyHandlerDown);
+#else
+    PREP(keyHandlerDown_Linux);
+    FUNC(keyHandlerDown) = FUNC(keyHandlerDown_Linux);
+#endif
 PREP(keyHandlerUp);
 
 ["keyDown", FUNC(keyHandlerDown)] call CBA_fnc_addDisplayHandler;
@@ -50,7 +60,11 @@ PREP(keyHandlerUp);
 private _keyHandlers = [];
 _keyHandlers resize 250;
 
-GVAR(keyDownStates) = _keyHandlers apply {[]};
+#ifndef LINUX_BUILD
+    GVAR(keyDownStates) = _keyHandlers apply {[]};
+#else
+    GVAR(keyDownStates) = [_keyHandlers, {[]}] call CBA_fnc_filter;
+#endif
 GVAR(keyUpStates) = + GVAR(keyDownStates);
 
 GVAR(keyHandlersDown) = call CBA_fnc_createNamespace;
